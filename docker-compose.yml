@@ -5,8 +5,6 @@ services:
         container_name: mysql
         ports:
             - 127.0.0.1:3169:3169
-        expose:
-            - 5000
         volumes:
              - .docker/setup.sql:/docker-entrypoint-initdb.d/setup.sql
              - db_data:/var/lib/mysql
@@ -15,11 +13,11 @@ services:
             - dev
     app:
         container_name: frontend_app
-        build: .
+        build: 
+            context: .
+            dockerfile: Dockerfile
         ports:
-            - 127.0.0.1:6931:6931
-        expose:
-            - 4000
+            - 127.0.0.1:4545:4545
         restart: on-failure
         volumes:
             - api:/usr/src/bin

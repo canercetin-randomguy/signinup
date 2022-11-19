@@ -30,8 +30,8 @@ func AfterLogin(w http.ResponseWriter, r *http.Request) {
 }
 func main() {
 	var (
-		host     = "127.0.0.1"
-		port     = 3306
+		host     = "mysql"
+		port     = 3169
 		dbuser   = "root"
 		password = "1234"
 		dbname   = "users"
@@ -76,6 +76,9 @@ func main() {
 			fmt.Fprintf(w, "Healthy Response %d", http.StatusOK)
 		}
 	})
-	fmt.Println("Starting Server on 0.0.0.0:6931")
-	http.ListenAndServe(":3131", r)
+	fmt.Println("Starting Server on 0.0.0.0:4545")
+	err = http.ListenAndServe(":4545", r)
+	if err != nil {
+		panic(err)
+	}
 }
