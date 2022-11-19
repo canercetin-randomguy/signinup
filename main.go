@@ -6,8 +6,7 @@ import (
 
 	"github.com/AlyRagab/golang-user-registration/controllers"
 	"github.com/AlyRagab/golang-user-registration/models"
-
-	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 )
 
 // Error Handling
@@ -25,7 +24,7 @@ func notfound(w http.ResponseWriter, r *http.Request) {
 
 var psqlInfo string
 
-func AfterLogin(w http.ResponseWriter, r *http.Request) {
+func AfterLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintf(w, "If you see this text, then you are signed up. I am too lazy to develop anything related to frontend.")
 }
 func main() {
@@ -44,17 +43,16 @@ func main() {
 	}
 	defer us.Close()
 
-	staticC := controllers.NewStatic() // Parsing static templates
+	// _ = controllers.NewStatic()        // Parsing static templates
 	usersC := controllers.NewUsers(us) // Handling User Controller
 
-	r := mux.NewRouter()
-	r.HandleFunc("/home", AfterLogin).Methods("GET")
-	r.Handle("/contact", staticC.Contact).Methods("GET")
-	r.HandleFunc("/", usersC.New).Methods("GET")
-	r.HandleFunc("/signup", usersC.New).Methods("GET")
-	r.HandleFunc("/signup", usersC.Create).Methods("POST")
-	r.HandleFunc("/cookietest", usersC.CookieTest).Methods("GET")
-	r.NotFoundHandler = http.HandlerFunc(notfound)
+	r := httprouter.New()
+	r.GET("/home", AfterLogin)
+	r.GET("/", usersC.New)
+	r.GET("/signup", usersC.New)
+	r.POST("/signup", usersC.Create)
+	r.GET("/cookietest", usersC.CookieTest)
+	r.NotFound = http.HandlerFunc(notfound)
 
 	// healthz endpoint
 	// h, _ := health.New()
@@ -67,7 +65,7 @@ func main() {
 	// 	}),
 	// })
 
-	r.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+	r.GET("/healthz", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		err = us.Ping()
 		if err != nil {
 			fmt.Fprintf(w, "Not Healthy Response %d", http.StatusInternalServerError)

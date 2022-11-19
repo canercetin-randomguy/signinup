@@ -7,6 +7,7 @@ import (
 	"github.com/AlyRagab/golang-user-registration/models"
 	"github.com/AlyRagab/golang-user-registration/modules/rand"
 	"github.com/AlyRagab/golang-user-registration/views"
+	"github.com/julienschmidt/httprouter"
 )
 
 // NewUsers for Parsing new user view/template in signup page
@@ -19,14 +20,14 @@ func NewUsers(us models.UserService) *Users {
 }
 
 // New method to Render and Execute the new user view/template
-func (u *Users) New(w http.ResponseWriter, r *http.Request) {
+func (u *Users) New(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if err := u.NewView.Render(w, nil); err != nil {
 		panic(err)
 	}
 }
 
 // Create method for creating new user " POST /signup" endpoint
-func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
+func (u *Users) Create(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	var form SignupForm
 	if err := parseForm(r, &form); err != nil {
 		panic(err)
@@ -103,7 +104,7 @@ func (u *Users) signIn(w http.ResponseWriter, user *models.User) error {
 }
 
 // CookieTest is used to display cookies set on the current user :
-func (u *Users) CookieTest(w http.ResponseWriter, r *http.Request) {
+func (u *Users) CookieTest(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	cookie, err := r.Cookie("remember_token")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

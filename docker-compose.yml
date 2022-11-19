@@ -11,6 +11,10 @@ services:
         restart: on-failure
         networks:
             - dev
+        healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+            timeout: 20s
+            retries: 10
     app:
         container_name: frontend_app
         build: 
@@ -22,7 +26,8 @@ services:
         volumes:
             - api:/usr/src/bin
         depends_on:
-            -   db
+            db:
+                condition: service_healthy
         networks:
             - dev
 volumes:
