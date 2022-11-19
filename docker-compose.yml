@@ -1,0 +1,35 @@
+version: '3.5'
+services:
+    db:
+        image: mysql/mysql-server:latest
+        container_name: mysql
+        ports:
+            - 127.0.0.1:3169:3169
+        expose:
+            - 5000
+        volumes:
+             - .docker/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+             - db_data:/var/lib/mysql
+        restart: on-failure
+        networks:
+            - dev
+    app:
+        container_name: frontend_app
+        build: .
+        ports:
+            - 127.0.0.1:6931:6931
+        expose:
+            - 4000
+        restart: on-failure
+        volumes:
+            - api:/usr/src/bin
+        depends_on:
+            -   db
+        networks:
+            - dev
+volumes:
+    db_data:
+    api:
+networks:
+    dev:
+        driver: bridge
