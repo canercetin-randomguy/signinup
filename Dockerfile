@@ -9,5 +9,5 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=builder /bin/main .
-EXPOSE 4792
+EXPOSE 4000
 CMD ["./main"]
