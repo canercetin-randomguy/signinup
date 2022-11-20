@@ -3,17 +3,22 @@ services:
     db:
         image: mysql/mysql-server:latest
         container_name: mysql
+        build:
+            context: .
+            dockerfile: ./db.Dockerfile
         ports:
-            - 127.0.0.1:3169:3169
+            - 127.0.0.1:3306:3306
         volumes:
-             - .docker/setup.sql:/docker-entrypoint-initdb.d/setup.sql
              - db_data:/var/lib/mysql
         restart: on-failure
+        command: ["mysqld", "--default-authentication-plugin=mysql_native_password"]
+        environment:
+             - MYSQL_ROOT_PASSWORD=1234
         networks:
             - dev
         healthcheck:
             test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-            timeout: 20s
+            timeout: 60s
             retries: 10
     app:
         container_name: frontend_app

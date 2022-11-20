@@ -29,14 +29,14 @@ func AfterLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 func main() {
 	var (
-		host     = "mysql"
-		port     = 3169
-		dbuser   = "root"
+		host   = "mysql"
+		port   = 3306
+		dbuser = "cansu"
 		password = "1234"
-		dbname   = "users"
+		dbname = "users"
 	)
 
-	psqlInfo = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", dbuser, password, host, port, dbname)
+	psqlInfo = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", dbuser,password, host, port, dbname)
 	us, err := models.NewUserService(psqlInfo)
 	if err != nil {
 		panic(err)
